@@ -1,7 +1,7 @@
 filter_templates() {
-    local templates="$(list_templates_by_group "${1}")"
+    local templates="$(raw_list_templates)"
 
     if [[ -n "${templates}" ]]; then
-        pipe "${templates}" | command "${deps[gum]}" filter --placeholder="Filter templates"
+        pipe "${templates}" | command "${deps[gum]}" filter --placeholder="Select a template"
     fi
 }

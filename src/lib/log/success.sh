@@ -1,4 +1,4 @@
 success() {
-    echo "$(green "pm:") ${1}"
+    echo "$(green "domo:") ${1}"
 }
 

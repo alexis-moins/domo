@@ -1,4 +1,7 @@
-local space="${args[space]}"
+spaces=''
+eval "spaces=(${args[spaces]:-})"
 
-run_silent mkdir "${PM_HOME}/${space}"
-success "new space added"
+for space in "${spaces[@]}"; do
+    run_silent mkdir "${DOMO_HOME}/${space}"
+    success "added space '${space}'"
+done

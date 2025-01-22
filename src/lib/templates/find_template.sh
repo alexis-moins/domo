@@ -1,10 +1,10 @@
 find_template() {
-    # Search for user templates first
-    local template="${HOME}/.config/pm/templates/${1}.sh"
+    # Find a template by its name.
+    local template="${CONFIG_DIR}/templates/${1}"
 
     if [[ ! -f "${template}" ]]; then
-        # Then search for pm templates
-        template="${PM_DATA_DIR}/templates/${1}.sh"
+        # If not found, search in default templates
+        template="${DATA_DIR}/templates/${1}"
 
         if [[ ! -f "${template}" ]]; then
             error "template '${1}' not found"

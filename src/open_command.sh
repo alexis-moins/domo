@@ -1,34 +1,59 @@
-local space="${args[--space]}"
-local name="${args[--name]}"
+#
+# Arguments
+#
+
+local path="${args[path]}"
+
+#
+# Flags
+#
 
 local backend="${args[--backend]}"
 
-if [[ -n "${backend}" ]]; then
-    # Path to the current backend
-    export BACKEND_PATH="$(find_backend "${backend}")"
+#
+# BACKEND
+#
+
+# If the environment is not specified, use the global environment
+if [[ -z "${backend}" ]]; then
+    backend="$(get_global_backend)"
 fi
 
-if [[ -z "${space}" ]] && [[ -z "${name}" ]]; then
+# Then get the full path to the 'backend' script
+if [[ -n "${backend}" ]]; then
+    BACKEND_SCRIPT="$(find_backend "${backend}")"
+fi
+
+#
+# PATH
+#
+
+# If the path is not specified, use the filtered projects
+if [[ -z "${path}" ]]; then
     local path="${args[path]:-"$(filter_projects)"}"
 
     if [[ -z "${path}" ]]; then
         exit 1
     fi
-
-    space="$(dirname "${path}")"
-    name="$(basename "${path}")"
 fi
+
+space="$(dirname "${path}")"
+name="$(basename "${path}")"
 
 if ! project_exists "${space}" "${name}"; then
     error "no project '${name}' in space '${space}'"
     exit 1
 fi
 
-# Export variable that will be usable within the backend script
+#
+# RUN
+#
+
+# Export variable that are available within the 'backend' script
 export SPACE="${space}"
-export SPACE_PATH="${PM_HOME}/${space}"
+export SPACE_PATH="${DOMO_HOME}/${space}"
 
 export PROJECT="${name}"
-export PROJECT_PATH="${PM_HOME}/${space}/${name}"
+export PROJECT_PATH="${DOMO_HOME}/${space}/${name}"
 
-source "${BACKEND_PATH}"
+source "${BACKEND_SCRIPT}"
