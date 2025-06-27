@@ -13,4 +13,4 @@ destination="${1:-"${HOME}/.local/bin"}"
 
 command git pull
 
-./install.sh "${destination}" &> /dev/null
+./install.sh "${destination}"
