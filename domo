@@ -11,26 +11,25 @@ version_command() {
   echo "$version"
 }
 
-pm_usage() {
-  printf "pm - manage your projects the easy way\n\n"
+domo_usage() {
+  printf "domo - manage your projects the easy way\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm COMMAND\n"
-  printf "  pm [COMMAND] --help | -h\n"
-  printf "  pm --version | -v\n"
+  printf "  domo COMMAND\n"
+  printf "  domo [COMMAND] --help | -h\n"
+  printf "  domo --version | -v\n"
   echo
 
   printf "%s\n" "Project Commands:"
-  printf "  %s   Create a new empty project\n" "new     "
-  printf "  %s   Clone a remote git repository\n" "clone   "
-  printf "  %s   Open a project\n" "open    "
-  printf "  %s   Filter projects\n" "filter  "
-  printf "  %s   List projects\n" "list    "
+  printf "  %s   Create a new project\n" "create    "
+  printf "  %s   Clone a remote git repository\n" "clone     "
+  printf "  %s   Open a project\n" "open      "
+  printf "  %s   List projects\n" "list      "
   echo
   printf "%s\n" "Commands:"
-  printf "  %s   Add, list and filter spaces\n" "space   "
-  printf "  %s   Template related commands\n" "template"
-  printf "  %s   Backend related commands\n" "backend "
+  printf "  %s   Space related commands\n" "space     "
+  printf "  %s   Template related commands\n" "template  "
+  printf "  %s   Backend related commands\n" "backend   "
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -45,46 +44,31 @@ pm_usage() {
 
     printf "%s\n" "Environment Variables:"
 
-    printf "  %s\n" "PM_HOME"
+    printf "  %s\n" "DOMO_HOME"
     printf "    Directory where the projects will be managed\n"
     printf "    %s\n" "Default: ${HOME}/dev"
     echo
 
-    printf "  %s\n" "PM_BACKEND_SHOW_CMD"
-    printf "    Command used to show backends\n"
-    printf "    %s\n" "Default: cat"
-    echo
-
-    printf "  %s\n" "PM_TEMPLATE_SHOW_CMD"
-    printf "    Command used to show templates\n"
+    printf "  %s\n" "DOMO_SHOW_CMD"
+    printf "    Command used to show backends & templates\n"
     printf "    %s\n" "Default: cat"
     echo
 
   fi
 }
 
-pm_new_usage() {
-  printf "pm new - Create a new empty project\n\n"
+domo_create_usage() {
+  printf "domo create - Create a new project\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm new [PATH] [OPTIONS]\n"
-  printf "  pm new --help | -h\n"
+  printf "  domo create [PATH] [OPTIONS]\n"
+  printf "  domo create --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
 
-    printf "  %s\n" "--space, -s SPACE"
-    printf "    Space to create the project in\n"
-    printf "    %s\n" "Needs: --name"
-    echo
-
-    printf "  %s\n" "--name, -n NAME"
-    printf "    Name of the project\n"
-    printf "    %s\n" "Needs: --space"
-    echo
-
-    printf "  %s\n" "--template, -t TEMPLATE"
+    printf "  %s\n" "--template, -t TEMPLATE (required)"
     printf "    Name of the template\n"
     echo
 
@@ -99,35 +83,27 @@ pm_new_usage() {
     printf "%s\n" "Arguments:"
 
     printf "  %s\n" "PATH"
-    printf "    Path to the project (relative to \$PM_HOME)\n"
+    printf "    Path to the project\n"
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm new tools/recipe\n"
-    printf "  pm new -n recipe -s tools -t cargo\n"
+    printf "  domo create tools/recipe -t cargo\n"
+    printf "  domo create tools/recipe -t cargo -b vscode\n"
     echo
 
   fi
 }
 
-pm_clone_usage() {
-  printf "pm clone - Clone a remote git repository\n\n"
+domo_clone_usage() {
+  printf "domo clone - Clone a remote git repository\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm clone REPOSITORY [OPTIONS]\n"
-  printf "  pm clone --help | -h\n"
+  printf "  domo clone REPOSITORY PATH\n"
+  printf "  domo clone --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
-
-    printf "  %s\n" "--space, -s SPACE (required)"
-    printf "    Space to clone the project in\n"
-    echo
-
-    printf "  %s\n" "--name, -n NAME (required)"
-    printf "    Name of the project\n"
-    echo
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
@@ -139,35 +115,29 @@ pm_clone_usage() {
     printf "    Remote repository url\n"
     echo
 
+    printf "  %s\n" "PATH"
+    printf "    Path to the project\n"
+    echo
+
     printf "%s\n" "Examples:"
-    printf "  pm clone git@github.com:alexis-moins/recipe.git -s tools -n recipe\n"
+    printf "  domo clone git@github.com:alexis-moins/recipe.git tools/recipe\n"
     echo
 
   fi
 }
 
-pm_open_usage() {
-  printf "pm open - Open a project\n\n"
+domo_open_usage() {
+  printf "domo open - Open a project\n\n"
   printf "Alias: o\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm open [PATH] [OPTIONS]\n"
-  printf "  pm open --help | -h\n"
+  printf "  domo open [PATH] [OPTIONS]\n"
+  printf "  domo open --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
-
-    printf "  %s\n" "--space, -s SPACE"
-    printf "    Space where the project is located\n"
-    printf "    %s\n" "Needs: --name"
-    echo
-
-    printf "  %s\n" "--name, -n NAME"
-    printf "    Name of the project\n"
-    printf "    %s\n" "Needs: --space"
-    echo
 
     printf "  %s\n" "--backend, -b BACKEND"
     printf "    Name of the backend used to open projects\n"
@@ -180,47 +150,25 @@ pm_open_usage() {
     printf "%s\n" "Arguments:"
 
     printf "  %s\n" "PATH"
-    printf "    Path to the project (relative to \$PM_HOME)\n"
+    printf "    Path to the project\n"
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm open tools/recipe\n"
-    printf "  pm open -s tools -n recipe\n"
+    printf "  domo open tools/recipe\n"
+    printf "  domo open tools/recipe -b vscode\n"
     echo
 
   fi
 }
 
-pm_filter_usage() {
-  printf "pm filter - Filter projects\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  pm filter\n"
-  printf "  pm filter --help | -h\n"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    printf "%s\n" "Examples:"
-    printf "  pm filter\n"
-    echo
-
-  fi
-}
-
-pm_list_usage() {
-  printf "pm list - List projects\n\n"
+domo_list_usage() {
+  printf "domo list - List projects\n\n"
   printf "Alias: ls\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm list\n"
-  printf "  pm list --help | -h\n"
+  printf "  domo list\n"
+  printf "  domo list --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -231,43 +179,19 @@ pm_list_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm ls\n"
-    printf "  pm list\n"
+    printf "  domo ls\n"
+    printf "  domo list\n"
     echo
 
   fi
 }
 
-pm_space_usage() {
-  printf "pm space - Add, list and filter spaces\n\n"
+domo__install_usage() {
+  printf "domo _install - Installation helper command\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm space COMMAND\n"
-  printf "  pm space [COMMAND] --help | -h\n"
-  echo
-
-  printf "%s\n" "Commands:"
-  printf "  %s   Add a new space\n" "add   "
-  printf "  %s   List added spaces\n" "list  "
-  printf "  %s   Filter spaces\n" "filter"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-  fi
-}
-
-pm_space_add_usage() {
-  printf "pm space add - Add a new space\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  pm space add SPACE\n"
-  printf "  pm space add --help | -h\n"
+  printf "  domo _install DESTINATION\n"
+  printf "  domo _install --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -279,25 +203,102 @@ pm_space_add_usage() {
 
     printf "%s\n" "Arguments:"
 
-    printf "  %s\n" "SPACE"
-    printf "    Name of the space to add\n"
+    printf "  %s\n" "DESTINATION"
+    printf "    Path to install the script\n"
     echo
 
-    printf "%s\n" "Examples:"
-    printf "  pm space add personal\n"
+    printf "This command is private and not intended for public use.\n\nIt is used to install the domo script in a specific location, and it\nshould not be used by end users. Use the \`install.sh\` script instead.\n\n"
     echo
 
   fi
 }
 
-pm_space_list_usage() {
-  printf "pm space list - List added spaces\n\n"
+domo__uninstall_usage() {
+  printf "domo _uninstall - Uninstallation helper command\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  domo _uninstall DESTINATION\n"
+  printf "  domo _uninstall --help | -h\n"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    printf "%s\n" "Arguments:"
+
+    printf "  %s\n" "DESTINATION"
+    printf "    Path to install the script\n"
+    echo
+
+    printf "This command is private and not intended for public use.\n\nIt is used to uninstall the domo script, and it should not be used by\nend users. Use the \`uninstall.sh\` script instead.\n\n"
+    echo
+
+  fi
+}
+
+domo_space_usage() {
+  printf "domo space - Space related commands\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  domo space COMMAND\n"
+  printf "  domo space [COMMAND] --help | -h\n"
+  echo
+
+  printf "%s\n" "Commands:"
+  printf "  %s   Add a new space\n" "add "
+  printf "  %s   List spaces\n" "list"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+domo_space_add_usage() {
+  printf "domo space add - Add a new space\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  domo space add SPACES...\n"
+  printf "  domo space add --help | -h\n"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    printf "%s\n" "Arguments:"
+
+    printf "  %s\n" "SPACES..."
+    printf "    Name of the spaces to add\n"
+    echo
+
+    printf "%s\n" "Examples:"
+    printf "  domo space add A B C\n"
+    echo
+
+  fi
+}
+
+domo_space_list_usage() {
+  printf "domo space list - List spaces\n\n"
   printf "Alias: ls\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm space list\n"
-  printf "  pm space list --help | -h\n"
+  printf "  domo space list\n"
+  printf "  domo space list --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -308,53 +309,29 @@ pm_space_list_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm space ls\n"
-    printf "  pm space list\n"
+    printf "  domo space ls\n"
+    printf "  domo space list\n"
     echo
 
   fi
 }
 
-pm_space_filter_usage() {
-  printf "pm space filter - Filter spaces\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  pm space filter\n"
-  printf "  pm space filter --help | -h\n"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    printf "%s\n" "Examples:"
-    printf "  pm space filter\n"
-    echo
-
-  fi
-}
-
-pm_template_usage() {
-  printf "pm template - Template related commands\n\n"
+domo_template_usage() {
+  printf "domo template - Template related commands\n\n"
   printf "Alias: temp\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm template COMMAND\n"
-  printf "  pm template [COMMAND] --help | -h\n"
+  printf "  domo template COMMAND\n"
+  printf "  domo template [COMMAND] --help | -h\n"
   echo
 
   printf "%s\n" "Commands:"
-  printf "  %s   Set a template as global\n" "global"
-  printf "  %s   List templates\n" "list  "
-  printf "  %s   Filter templates\n" "filter"
-  printf "  %s   Show a template\n" "show  "
-  printf "  %s   Create a new template\n" "new   "
-  printf "  %s   Edit a template\n" "edit  "
-  printf "  %s   Locates a template\n" "which "
+  printf "  %s   List templates\n" "list "
+  printf "  %s   Show a template\n" "show "
+  printf "  %s   Add a new template\n" "add  "
+  printf "  %s   Edit a template\n" "edit "
+  printf "  %s   Locates a template\n" "which"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -367,101 +344,36 @@ pm_template_usage() {
   fi
 }
 
-pm_template_global_usage() {
-  printf "pm template global - Set a template as global\n\n"
-  printf "Alias: g\n"
-  echo
-
-  printf "%s\n" "Usage:"
-  printf "  pm template global [TEMPLATE]\n"
-  printf "  pm template global --help | -h\n"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    printf "%s\n" "Arguments:"
-
-    printf "  %s\n" "TEMPLATE"
-    printf "    Name of the template\n"
-    echo
-
-    printf "%s\n" "Examples:"
-    printf "  pm template global\n"
-    printf "  pm template global react\n"
-    echo
-
-  fi
-}
-
-pm_template_list_usage() {
-  printf "pm template list - List templates\n\n"
+domo_template_list_usage() {
+  printf "domo template list - List templates\n\n"
   printf "Alias: ls\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm template list [OPTIONS]\n"
-  printf "  pm template list --help | -h\n"
+  printf "  domo template list\n"
+  printf "  domo template list --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
-
-    printf "  %s\n" "--only, -o GROUP"
-    printf "    List only specific templates\n"
-    printf "    %s\n" "Allowed: user, default"
-    echo
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm template list\n"
-    printf "  pm template list --only=default\n"
+    printf "  domo template list\n"
     echo
 
   fi
 }
 
-pm_template_filter_usage() {
-  printf "pm template filter - Filter templates\n\n"
+domo_template_show_usage() {
+  printf "domo template show - Show a template\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm template filter [OPTIONS]\n"
-  printf "  pm template filter --help | -h\n"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--only, -o GROUP"
-    printf "    Filter only specific templates\n"
-    printf "    %s\n" "Allowed: user, default"
-    echo
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    printf "%s\n" "Examples:"
-    printf "  pm template filter\n"
-    printf "  pm template filter --only=user\n"
-    echo
-
-  fi
-}
-
-pm_template_show_usage() {
-  printf "pm template show - Show a template\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  pm template show TEMPLATE [OPTIONS]\n"
-  printf "  pm template show --help | -h\n"
+  printf "  domo template show TEMPLATE [OPTIONS]\n"
+  printf "  domo template show --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -469,7 +381,7 @@ pm_template_show_usage() {
 
     printf "  %s\n" "--exec, -x EXECUTABLE"
     printf "    Command used to show the template\n"
-    printf "    %s\n" "Default: ${PM_TEMPLATE_SHOW_CMD}"
+    printf "    %s\n" "Default: ${DOMO_SHOW_CMD}"
     echo
 
     printf "  %s\n" "--help, -h"
@@ -483,19 +395,19 @@ pm_template_show_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm template show cargo\n"
-    printf "  pm template show cargo -x bat\n"
+    printf "  domo template show cargo\n"
+    printf "  domo template show cargo -x bat\n"
     echo
 
   fi
 }
 
-pm_template_new_usage() {
-  printf "pm template new - Create a new template\n\n"
+domo_template_add_usage() {
+  printf "domo template add - Add a new template\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm template new TEMPLATE\n"
-  printf "  pm template new --help | -h\n"
+  printf "  domo template add TEMPLATE\n"
+  printf "  domo template add --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -512,20 +424,20 @@ pm_template_new_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm template new poetry\n"
+    printf "  domo template add poetry\n"
     echo
 
   fi
 }
 
-pm_template_edit_usage() {
-  printf "pm template edit - Edit a template\n\n"
+domo_template_edit_usage() {
+  printf "domo template edit - Edit a template\n\n"
   printf "Alias: e\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm template edit [TEMPLATE]\n"
-  printf "  pm template edit --help | -h\n"
+  printf "  domo template edit [TEMPLATE]\n"
+  printf "  domo template edit --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -542,19 +454,19 @@ pm_template_edit_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm template edit\n"
-    printf "  pm template edit python\n"
+    printf "  domo template edit\n"
+    printf "  domo template edit python\n"
     echo
 
   fi
 }
 
-pm_template_which_usage() {
-  printf "pm template which - Locates a template\n\n"
+domo_template_which_usage() {
+  printf "domo template which - Locates a template\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm template which [TEMPLATE]\n"
-  printf "  pm template which --help | -h\n"
+  printf "  domo template which [TEMPLATE]\n"
+  printf "  domo template which --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -571,30 +483,30 @@ pm_template_which_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm template which python\n"
+    printf "  domo template which python\n"
     echo
 
   fi
 }
 
-pm_backend_usage() {
-  printf "pm backend - Backend related commands\n\n"
+domo_backend_usage() {
+  printf "domo backend - Backend related commands\n\n"
   printf "Alias: back\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm backend COMMAND\n"
-  printf "  pm backend [COMMAND] --help | -h\n"
+  printf "  domo backend COMMAND\n"
+  printf "  domo backend [COMMAND] --help | -h\n"
   echo
 
   printf "%s\n" "Commands:"
-  printf "  %s   Set a backend as global\n" "global"
-  printf "  %s   List backends\n" "list  "
-  printf "  %s   Filter backends\n" "filter"
-  printf "  %s   Show backends\n" "show  "
-  printf "  %s   Create a new backend\n" "new   "
-  printf "  %s   Edit a backend\n" "edit  "
-  printf "  %s   Locates a backend\n" "which "
+  printf "  %s   Set the global backend\n" "set  "
+  printf "  %s   Show the global backend\n" "get  "
+  printf "  %s   List backends\n" "list "
+  printf "  %s   Show a backend\n" "show "
+  printf "  %s   Add a new backend\n" "add  "
+  printf "  %s   Edit a backend\n" "edit "
+  printf "  %s   Locates a backend\n" "which"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -607,14 +519,12 @@ pm_backend_usage() {
   fi
 }
 
-pm_backend_global_usage() {
-  printf "pm backend global - Set a backend as global\n\n"
-  printf "Alias: g\n"
-  echo
+domo_backend_set_usage() {
+  printf "domo backend set - Set the global backend\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm backend global [BACKEND]\n"
-  printf "  pm backend global --help | -h\n"
+  printf "  domo backend set BACKEND\n"
+  printf "  domo backend set --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -631,77 +541,64 @@ pm_backend_global_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend global\n"
-    printf "  pm backend global vscode\n"
+    printf "  domo backend set vscode\n"
     echo
 
   fi
 }
 
-pm_backend_list_usage() {
-  printf "pm backend list - List backends\n\n"
+domo_backend_get_usage() {
+  printf "domo backend get - Show the global backend\n\n"
+
+  printf "%s\n" "Usage:"
+  printf "  domo backend get\n"
+  printf "  domo backend get --help | -h\n"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    printf "%s\n" "Examples:"
+    printf "  domo backend get\n"
+    echo
+
+  fi
+}
+
+domo_backend_list_usage() {
+  printf "domo backend list - List backends\n\n"
   printf "Alias: ls\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  pm backend list [OPTIONS]\n"
-  printf "  pm backend list --help | -h\n"
+  printf "  domo backend list\n"
+  printf "  domo backend list --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
-
-    printf "  %s\n" "--only, -o GROUP"
-    printf "    List only specific backends\n"
-    printf "    %s\n" "Allowed: user, default"
-    echo
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend list\n"
-    printf "  pm backend list --only=default\n"
+    printf "  domo backend list\n"
     echo
 
   fi
 }
 
-pm_backend_filter_usage() {
-  printf "pm backend filter - Filter backends\n\n"
+domo_backend_show_usage() {
+  printf "domo backend show - Show a backend\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm backend filter [OPTIONS]\n"
-  printf "  pm backend filter --help | -h\n"
-  echo
-
-  if [[ -n "$long_usage" ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--only, -o GROUP"
-    printf "    Filter only specific backends\n"
-    printf "    %s\n" "Allowed: user, default"
-    echo
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    printf "%s\n" "Examples:"
-    printf "  pm backend filter\n"
-    printf "  pm backend filter --only=user\n"
-    echo
-
-  fi
-}
-
-pm_backend_show_usage() {
-  printf "pm backend show - Show backends\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  pm backend show BACKEND [OPTIONS]\n"
-  printf "  pm backend show --help | -h\n"
+  printf "  domo backend show [BACKEND] [OPTIONS]\n"
+  printf "  domo backend show --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -709,7 +606,7 @@ pm_backend_show_usage() {
 
     printf "  %s\n" "--exec, -x EXECUTABLE"
     printf "    Command used to show the backend\n"
-    printf "    %s\n" "Default: ${PM_BACKEND_SHOW_CMD}"
+    printf "    %s\n" "Default: ${DOMO_SHOW_CMD}"
     echo
 
     printf "  %s\n" "--help, -h"
@@ -723,19 +620,19 @@ pm_backend_show_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend show cargo\n"
-    printf "  pm backend show cargo -x bat\n"
+    printf "  domo backend show cargo\n"
+    printf "  domo backend show cargo -x bat\n"
     echo
 
   fi
 }
 
-pm_backend_new_usage() {
-  printf "pm backend new - Create a new backend\n\n"
+domo_backend_add_usage() {
+  printf "domo backend add - Add a new backend\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm backend new BACKEND\n"
-  printf "  pm backend new --help | -h\n"
+  printf "  domo backend add BACKEND\n"
+  printf "  domo backend add --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -752,18 +649,18 @@ pm_backend_new_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend new vscode\n"
+    printf "  domo backend add vscode\n"
     echo
 
   fi
 }
 
-pm_backend_edit_usage() {
-  printf "pm backend edit - Edit a backend\n\n"
+domo_backend_edit_usage() {
+  printf "domo backend edit - Edit a backend\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm backend edit [BACKEND]\n"
-  printf "  pm backend edit --help | -h\n"
+  printf "  domo backend edit [BACKEND]\n"
+  printf "  domo backend edit --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -780,19 +677,19 @@ pm_backend_edit_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend edit\n"
-    printf "  pm backend edit tmux\n"
+    printf "  domo backend edit\n"
+    printf "  domo backend edit tmux\n"
     echo
 
   fi
 }
 
-pm_backend_which_usage() {
-  printf "pm backend which - Locates a backend\n\n"
+domo_backend_which_usage() {
+  printf "domo backend which - Locates a backend\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  pm backend which BACKEND\n"
-  printf "  pm backend which --help | -h\n"
+  printf "  domo backend which BACKEND\n"
+  printf "  domo backend which --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -809,7 +706,7 @@ pm_backend_which_usage() {
     echo
 
     printf "%s\n" "Examples:"
-    printf "  pm backend which tmux\n"
+    printf "  domo backend which tmux\n"
     echo
 
   fi
@@ -846,7 +743,7 @@ normalize_input() {
 }
 
 backend_exists() {
-    if [[ -f "${PM_DATA_DIR}/backends/${1}.sh" ]] || [[ -f "${HOME}/.config/pm/backends/${1}.sh" ]]; then
+    if [[ -f "${DATA_DIR}/backends/${1}" ]] || [[ -f "${CONFIG_DIR}/backends/${1}" ]]; then
         return 0
     else
         return 1
@@ -854,7 +751,8 @@ backend_exists() {
 }
 
 filter_backends() {
-    local backends="$(list_backends_by_group "${1}")"
+    # Get all backends without formatting
+    local backends="$(raw_list_backends)"
 
     if [[ -n "${backends}" ]]; then
         pipe "${backends}" | command "${deps[gum]}" filter --placeholder "Filter backends..."
@@ -862,12 +760,12 @@ filter_backends() {
 }
 
 find_backend() {
-    # Search for user backend first
-    local backend="${HOME}/.config/pm/backends/${1}.sh"
+    # Find a backend by its name.
+    local backend="${CONFIG_DIR}/backends/${1}"
 
     if [[ ! -f "${backend}" ]]; then
-        # Then search for pm backends
-        backend="${PM_DATA_DIR}/backends/${1}.sh"
+        # If not found, search in default backends
+        backend="${DATA_DIR}/backends/${1}"
 
         if [[ ! -f "${backend}" ]]; then
             error "backend '${1}' not found"
@@ -878,18 +776,54 @@ find_backend() {
     echo "${backend}"
 }
 
-list_backends_by_group() {
-    # List 'user' backends first
-    if [[ -z "${1}" ]] || [[ "${1}" = "user" ]]; then
-        for file in $(command ls "${HOME}/.config/pm/backends"); do
-            echo "${file/.sh/}"; done
-    fi
+get_global_backend() {
+    cat "${DATA_DIR}/global-backend"
+}
 
-    # Then list 'default' backends
-    if [[ -z "${1}" ]] || [[ "${1}" = "default" ]]; then
-        for file in $(command ls "${PM_DATA_DIR}/backends"); do
-            echo "${file/.sh/}"; done
-    fi
+list_backends() {
+    default_backend="$(get_global_backend)"
+
+    #
+    # User defined backends
+    #
+    for file in $(command ls "${CONFIG_DIR}/backends"); do
+        if [[ "${file}" == "${default_backend}" ]]; then
+            echo "$(green "*") ${file}"
+        else
+            echo "  ${file}"
+        fi
+    done
+
+    #
+    # Default backends
+    #
+    for file in $(command ls "${DATA_DIR}/backends"); do
+        if [[ "${file}" == "${default_backend}" ]]; then
+            echo "$(green "*") ${file}"
+        else
+            echo "$(blue "D") ${file}"
+        fi
+    done
+}
+
+raw_list_backends() {
+    #
+    # User defined backends
+    #
+    for file in $(command ls "${CONFIG_DIR}/backends"); do
+        echo "${file}"
+    done
+
+    #
+    # Default backends
+    #
+    for file in $(command ls "${DATA_DIR}/backends"); do
+        echo "${file}"
+    done
+}
+
+set_global_backend() {
+    echo "${1}" > "${DATA_DIR}/global-backend"
 }
 
 print_in_color() {
@@ -933,19 +867,19 @@ black_underlined() { print_in_color "\e[4;30m" "$*"; }
 white_underlined() { print_in_color "\e[4;37m" "$*"; }
 
 error() {
-    echo "$(red "pm:") ${1}"
+    echo "$(red "domo:") ${1}"
 }
 
 info() {
-    echo "$(blue "pm:") ${1}"
+    echo "$(blue "domo:") ${1}"
 }
 
 success() {
-    echo "$(green "pm:") ${1}"
+    echo "$(green "domo:") ${1}"
 }
 
 warn() {
-    echo "$(yellow "pm:") ${1}"
+    echo "$(yellow "domo:") ${1}"
 }
 
 pipe() {
@@ -957,46 +891,49 @@ filter_projects() {
 }
 
 list_projects() {
-    find "${PM_HOME}" -maxdepth 2 -mindepth 2 -type d ! -name '.*' \
-        | sed "s!${PM_HOME}/!!"
+    find "${DOMO_HOME}" -maxdepth 2 -mindepth 2 -type d ! -name '.*' \
+        | sed "s!${DOMO_HOME}/!!"
 }
 
 project_exists() {
-    [[ -d "${PM_HOME}/${1}/${2}" ]] && return 0 || return 1
+    [[ -d "${DOMO_HOME}/${1}/${2}" ]] && return 0 || return 1
 }
 
 run_silent() {
   command ${@} &> /dev/null
 }
 
+# Filter spaces using gum choose.
+#
+# Usage: filter_spaces "Header text"
 filter_spaces() {
-    list_spaces | command "${deps[gum]}" filter --placeholder "Filter spaces..."
+    list_spaces | command "${deps[gum]}" choose --header "${1}" --no-show-help
 }
 
 list_spaces() {
-    find "${PM_HOME}" -maxdepth 1 -mindepth 1 -type d ! -name '.*' \
-        | sed "s!${PM_HOME}/!!"
+    find "${DOMO_HOME}" -maxdepth 1 -mindepth 1 -type d ! -name '.*' \
+        | sed "s!${DOMO_HOME}/!!"
 }
 
 space_exists() {
-    [[ -d "${PM_HOME}/${1}" ]] && return 0 || return 1
+    [[ -d "${DOMO_HOME}/${1}" ]] && return 0 || return 1
 }
 
 filter_templates() {
-    local templates="$(list_templates_by_group "${1}")"
+    local templates="$(raw_list_templates)"
 
     if [[ -n "${templates}" ]]; then
-        pipe "${templates}" | command "${deps[gum]}" filter --placeholder="Filter templates"
+        pipe "${templates}" | command "${deps[gum]}" filter --placeholder="Select a template"
     fi
 }
 
 find_template() {
-    # Search for user templates first
-    local template="${HOME}/.config/pm/templates/${1}.sh"
+    # Find a template by its name.
+    local template="${CONFIG_DIR}/templates/${1}"
 
     if [[ ! -f "${template}" ]]; then
-        # Then search for pm templates
-        template="${PM_DATA_DIR}/templates/${1}.sh"
+        # If not found, search in default templates
+        template="${DATA_DIR}/templates/${1}"
 
         if [[ ! -f "${template}" ]]; then
             error "template '${1}' not found"
@@ -1007,22 +944,40 @@ find_template() {
     echo "${template}"
 }
 
-list_templates_by_group() {
-    # List 'user' templates first
-    if [[ -z "${1}" ]] || [[ "${1}" = "user" ]]; then
-        for file in $(command ls "${HOME}/.config/pm/templates"); do
-            echo "${file/.sh/}"; done
-    fi
+list_templates() {
+    #
+    # User defined templates
+    #
+    for file in $(command ls "${CONFIG_DIR}/templates"); do
+        echo "  ${file}"
+    done
 
-    # Then list 'default' templates
-    if [[ -z "${1}" ]] || [[ "${1}" = "default" ]]; then
-        for file in $(command ls "${PM_DATA_DIR}/templates"); do
-            echo "${file/.sh/}"; done
-    fi
+    #
+    # Default templates
+    #
+    for file in $(command ls "${DATA_DIR}/templates"); do
+        echo "$(blue "D") ${file}"
+    done
+}
+
+raw_list_templates() {
+    #
+    # User defined templates
+    #
+    for file in $(command ls "${CONFIG_DIR}/templates"); do
+        echo "${file}"
+    done
+
+    #
+    # Default templates
+    #
+    for file in $(command ls "${DATA_DIR}/templates"); do
+        echo "${file}"
+    done
 }
 
 template_exists() {
-    [[ ! -f "${PM_DATA_DIR}/templates/${1}.sh" ]] && [[ ! -f "${HOME}/.config/pm/templates/${1}.sh" ]] && return 1 || return 0
+    [[ ! -f "${DATA_DIR}/templates/${1}" ]] && [[ ! -f "${CONFIG_DIR}/templates/${1}" ]] && return 1 || return 0
 }
 
 validate_backend_exists() {
@@ -1054,13 +1009,13 @@ validate_not_empty() {
 }
 
 validate_project_exists() {
-    if [[ ! "${1}" = */* ]] || [[ ! -d "${PM_HOME}/${1}" ]]; then
+    if [[ ! "${1}" = */* ]] || [[ ! -d "${DOMO_HOME}/${1}" ]]; then
         error "project not found: ${1}"
     fi
 }
 
 validate_project_is_missing() {
-    if [[ ! "${1}" = */* ]] || [[ -d "${PM_HOME}/${1}" ]]; then
+    if [[ ! "${1}" = */* ]] || [[ -d "${DOMO_HOME}/${1}" ]]; then
         error "project already exists: ${1}"
     fi
 }
@@ -1072,7 +1027,7 @@ validate_space_exists() {
 }
 
 validate_space_is_missing() {
-    if command grep "${1}" "${PM_HOME}/spaces" &> /dev/null; then
+    if command grep "${1}" "${DOMO_HOME}/spaces" &> /dev/null; then
         error "space already exists: ${1}"
     fi
 }
@@ -1089,198 +1044,243 @@ validate_template_is_missing() {
     fi
 }
 
-pm_new_command() {
+domo_create_command() {
 
   local path="${args[path]}"
-
-  local name="${args[--name]}"
-  local space="${args[--space]}"
 
   local template="${args[--template]}"
   local backend="${args[--backend]}"
 
-  if [[ -n "${template}" ]]; then
-      # Path to the current template
-      export TEMPLATE_PATH="$(find_template "${template}")"
+  # Path to the current template
+  TEMPLATE_SCRIPT="$(find_template "${template}")"
+
+  #
+  # BACKEND
+  #
+
+  # If the backend is not specified, use the global backend
+  if [[ -z "${backend}" ]]; then
+      backend="$(get_global_backend)"
   fi
 
+  # Then get the full path to the 'backend' script
   if [[ -n "${backend}" ]]; then
-      # Path to the current backend
-      export BACKEND_PATH="$(find_backend "${backend}")"
+      BACKEND_SCRIPT="$(find_backend "${backend}")"
   fi
 
-  if [[ -z "${space}" ]] && [[ -z "${name}" ]]; then
-      if [[ -z "${path}" ]]; then
-          space="$(filter_spaces)"
+  #
+  # SPACE and PROJECT
+  #
 
-          echo "Space to create the project in: $(green "${space}")"
+  space="$(dirname "${path}")"
 
-          [[ -z "${space}" ]] && exit 1
-          name=$(gum input --prompt="What is the name of the project? " --placeholder="project name" --no-show-help)
-
-          [[ -z "${name}" ]] && exit 1
-          echo "What is the name of the project: $(green "${name}")"
-      else
-          space="$(dirname "${path}")"
-
-          if ! space_exists "${space}"; then
-              error "'${space}' is not a valid space"
-              exit 1
-          fi
-
-          name="$(basename "${path}")"
-      fi
+  if ! space_exists "${space}"; then
+      error "'${space}' is not a valid space"
+      exit 1
   fi
 
-  if project_exists "${space}" "${name}"; then
-      error "project '${name}' already exists in space '${space}'"
+  project_name="$(basename "${path}")"
+
+  if project_exists "${space}" "${project_name}"; then
+      error "project '${project_name}' already exists in space '${space}'"
       exit 1
   fi
 
   # Export variable that will be usable within the template and backend scripts
   export SPACE="${space}"
-  export SPACE_PATH="${PM_HOME}/${space}"
+  export SPACE_PATH="${DOMO_HOME}/${space}"
 
-  export PROJECT="${name}"
-  export PROJECT_PATH="${PM_HOME}/${space}/${name}"
+  export PROJECT="${project_name}"
+  export PROJECT_PATH="${DOMO_HOME}/${space}/${project_name}"
 
-  source "${TEMPLATE_PATH}"
+  source "${TEMPLATE_SCRIPT}"
 
   if [[ "${?}" -eq 0 ]]; then
-      success "project '${name}' created in space '${space}'"
+      success "project '${project_name}' created in space '${space}'"
   else
       error "unable to create project"
       exit 1
   fi
 
-  source "${BACKEND_PATH}"
+  source "${BACKEND_SCRIPT}"
 
 }
 
-pm_clone_command() {
+domo_clone_command() {
+
+  #
+  # Arguments
+  #
 
   local repository="${args[repository]}"
+  local path="${args[path]}"
 
-  local name="${args[--name]}"
-  local space="${args[--space]}"
+  space="$(dirname "${path}")"
+  name="$(basename "${path}")"
 
   if project_exists "${space}" "${name}"; then
       error "project '${name}' already exists in space '${space}'"
       exit 1
   fi
 
-  local destination="${PM_HOME}/${space}/${name}"
+  local destination="${DOMO_HOME}/${space}/${name}"
 
   command "${deps[git]}" clone "${repository}" "${destination}"
   success "cloned project ${name} in space ${space}"
 
 }
 
-pm_open_command() {
+domo_open_command() {
 
-  local space="${args[--space]}"
-  local name="${args[--name]}"
+  #
+  # Arguments
+  #
+
+  local path="${args[path]}"
+
+  #
+  # Flags
+  #
 
   local backend="${args[--backend]}"
 
-  if [[ -n "${backend}" ]]; then
-      # Path to the current backend
-      export BACKEND_PATH="$(find_backend "${backend}")"
+  #
+  # BACKEND
+  #
+
+  # If the environment is not specified, use the global environment
+  if [[ -z "${backend}" ]]; then
+      backend="$(get_global_backend)"
   fi
 
-  if [[ -z "${space}" ]] && [[ -z "${name}" ]]; then
+  # Then get the full path to the 'backend' script
+  if [[ -n "${backend}" ]]; then
+      BACKEND_SCRIPT="$(find_backend "${backend}")"
+  fi
+
+  #
+  # PATH
+  #
+
+  # If the path is not specified, use the filtered projects
+  if [[ -z "${path}" ]]; then
       local path="${args[path]:-"$(filter_projects)"}"
 
       if [[ -z "${path}" ]]; then
           exit 1
       fi
-
-      space="$(dirname "${path}")"
-      name="$(basename "${path}")"
   fi
+
+  space="$(dirname "${path}")"
+  name="$(basename "${path}")"
 
   if ! project_exists "${space}" "${name}"; then
       error "no project '${name}' in space '${space}'"
       exit 1
   fi
 
-  # Export variable that will be usable within the backend script
+  #
+  # RUN
+  #
+
+  # Export variable that are available within the 'backend' script
   export SPACE="${space}"
-  export SPACE_PATH="${PM_HOME}/${space}"
+  export SPACE_PATH="${DOMO_HOME}/${space}"
 
   export PROJECT="${name}"
-  export PROJECT_PATH="${PM_HOME}/${space}/${name}"
+  export PROJECT_PATH="${DOMO_HOME}/${space}/${name}"
 
-  source "${BACKEND_PATH}"
-
-}
-
-pm_filter_command() {
-
-  filter_projects
+  source "${BACKEND_SCRIPT}"
 
 }
 
-pm_list_command() {
+domo_list_command() {
 
   list_projects
 
 }
 
-pm_space_add_command() {
+domo__install_command() {
 
-  local space="${args[space]}"
+  #
+  # Arguments
+  #
+  local destination="${args[destination]}"
 
-  run_silent mkdir "${PM_HOME}/${space}"
-  success "new space added"
+  dirs=(
+      # The home directory for domo projects
+      "${DOMO_HOME}"
+
+      # Store domo data
+      "${DATA_DIR}/templates"
+      "${DATA_DIR}/backends"
+
+      # Store user configuration
+      "${CONFIG_DIR}/templates"
+      "${CONFIG_DIR}/backends"
+  )
+
+  # Create missing directories
+  for dir in ${dirs[*]}; do
+      if [[ ! -d "${dir}" ]]; then
+          command mkdir -p "${dir}"
+      fi
+  done
+
+  # Copy the default templates and backends into the data directory
+  command cp -R ./backends "${DATA_DIR}/"
+  command cp -R ./templates "${DATA_DIR}/"
+
+  # Sets the default global backend to 'shell'
+  echo "shell" > "${DATA_DIR}/global-backend"
+
+  command cp domo "${destination}/domo"
+  success "ready to use"
 
 }
 
-pm_space_list_command() {
+domo__uninstall_command() {
+
+  #
+  # Arguments
+  #
+  local destination="${args[destination]}"
+
+  command rm -rf "${DATA_DIR}"
+
+  if [[ -f "${destination}/domo" ]]; then
+      command rm "${destination}/domo"
+  fi
+
+  success "uninstalled successfully"
+
+}
+
+domo_space_add_command() {
+
+  spaces=''
+  eval "spaces=(${args[spaces]:-})"
+
+  for space in "${spaces[@]}"; do
+      run_silent mkdir "${DOMO_HOME}/${space}"
+      success "added space '${space}'"
+  done
+
+}
+
+domo_space_list_command() {
 
   list_spaces
 
 }
 
-pm_space_filter_command() {
+domo_template_list_command() {
 
-  filter_spaces
-
-}
-
-pm_template_global_command() {
-
-  local template="${args[template]}"
-
-  if [[ -z "${template}" ]]; then
-      # interactively select a template if none is provided
-      template="$(filter_templates)"
-
-      [[ -z "${template}" ]] && exit 0
-  fi
-
-  echo "${template}" > "${TEMPLATE_INDEX}"
-  success "using '${template}' as global template"
+  list_templates
 
 }
 
-pm_template_list_command() {
-
-  local only="${args[--only]}"
-
-  list_templates_by_group "${only}"
-
-}
-
-pm_template_filter_command() {
-
-  local only="${args[--only]}"
-
-  filter_templates "${only}"
-
-}
-
-pm_template_show_command() {
+domo_template_show_command() {
 
   local template_name="${args[template]}"
   local command="${args[--exec]}"
@@ -1291,28 +1291,25 @@ pm_template_show_command() {
 
 }
 
-pm_template_new_command() {
+domo_template_add_command() {
 
   local template_name="${args[template]}"
 
-  if [[ ! -d "${HOME}/.config/pm/templates" ]]; then
-      command mkdir -p "${HOME}/.config/pm/templates"
-  fi
-
-  local new_template_path="${HOME}/.config/pm/templates/${template_name}.sh"
+  local new_template_path="${CONFIG_DIR}/templates/${template_name}"
 
   command cat > ${new_template_path} << EOF
+# vim: set filetype=sh:
+#
 # Information about the project are passed as environment variables in the following way:
 #
 # SPACE        - name of the space the project must be created in.
 #
-# SPACE_PATH   - absolute path to the space directory. It corresponds to the
-#                following pattern evaluated: \${HOME}/\${PM_HOME}/\$SPACE.
+# SPACE_PATH   - absolute path to the space directory.
 #
 # PROJECT      - name of the project that must be created.
 #
-# PROJECT_PATH - absolute path to the project directory. It corresponds to the
-#                following pattern evaluated: \${SPACE_PATH}/\${PROJECT}.
+# PROJECT_PATH - absolute path to the project directory.
+#
 echo "Hi from '${template_name}' template"
 EOF
 
@@ -1320,7 +1317,7 @@ EOF
 
 }
 
-pm_template_edit_command() {
+domo_template_edit_command() {
 
   local template_name="${args[template]:-"$(filter_templates)"}"
 
@@ -1334,7 +1331,7 @@ pm_template_edit_command() {
 
 }
 
-pm_template_which_command() {
+domo_template_which_command() {
 
   local template_name="${args[template]}"
 
@@ -1342,71 +1339,57 @@ pm_template_which_command() {
 
 }
 
-pm_backend_global_command() {
+domo_backend_set_command() {
 
   local backend="${args[backend]}"
 
-  if [[ -z "${backend}" ]]; then
-      # Interactively select a backend if none is provided
-      backend="$(filter_backends)"
-
-      [[ -z "${backend}" ]] && exit 0
-  fi
-
-  echo "${backend}" > "${BACKEND_INDEX}"
-  success "using '${backend}' as global backend"
+  set_global_backend "${backend}"
+  success "set global backend"
 
 }
 
-pm_backend_list_command() {
+domo_backend_get_command() {
 
-  local only="${args[--only]}"
-
-  list_backends_by_group "${only}"
+  get_global_backend
 
 }
 
-pm_backend_filter_command() {
+domo_backend_list_command() {
 
-  local only="${args[--only]}"
-
-  filter_backends "${only}"
+  list_backends
 
 }
 
-pm_backend_show_command() {
+domo_backend_show_command() {
 
-  local backend_name="${args[backend]}"
+  local backend_name="${args[backend]:-"$(filter_backends)"}"
   local command="${args[--exec]}"
 
-  local backend="$(find_backend "${backend_name}")"
+  local backend_path="$(find_backend "${backend_name}")"
 
-  command ${command} "${backend}"
+  command ${command} "${backend_path}"
 
 }
 
-pm_backend_new_command() {
+domo_backend_add_command() {
 
   local backend_name="${args[backend]}"
 
-  if [[ ! -d "${HOME}/.config/pm/backends" ]]; then
-      command mkdir -p "${HOME}/.config/pm/backends"
-  fi
-
-  local new_backend_path="${HOME}/.config/pm/backends/${backend_name}.sh"
+  local new_backend_path="${CONFIG_DIR}/backends/${backend_name}"
 
   command cat > ${new_backend_path} << EOF
+# vim: set filetype=sh:
+#
 # Information about the project are passed as environment variables in the following way:
 #
 # SPACE        - name of the space the project must be created in.
 #
-# SPACE_PATH   - absolute path to the space directory. It corresponds to the
-#                following pattern evaluated: \${HOME}/\${PM_HOME}/\$SPACE.
+# SPACE_PATH   - absolute path to the space directory.
 #
 # PROJECT      - name of the project that must be created.
 #
-# PROJECT_PATH - absolute path to the project directory. It corresponds to the
-#                following pattern evaluated: \${SPACE_PATH}/\${PROJECT}.
+# PROJECT_PATH - absolute path to the project directory.
+#
 echo "Hi from '${backend_name}' backend"
 EOF
 
@@ -1414,7 +1397,7 @@ EOF
 
 }
 
-pm_backend_edit_command() {
+domo_backend_edit_command() {
 
   local backend_name="${args[backend]:-"$(filter_backends)"}"
 
@@ -1428,11 +1411,11 @@ pm_backend_edit_command() {
 
 }
 
-pm_backend_which_command() {
+domo_backend_which_command() {
 
-  local backend_name="${args[backend]}"
+  local env_name="${args[backend]}"
 
-  echo "$(find_backend "${backend_name}")"
+  echo "$(find_backend "${env_name}")"
 
 }
 
@@ -1448,7 +1431,7 @@ parse_requirements() {
 
       --help | -h)
         long_usage=yes
-        pm_usage
+        domo_usage
         exit
         ;;
 
@@ -1459,13 +1442,11 @@ parse_requirements() {
     esac
   done
 
-  export PM_HOME="${PM_HOME:-${HOME}/dev}"
-  export PM_BACKEND_SHOW_CMD="${PM_BACKEND_SHOW_CMD:-cat}"
-  export PM_TEMPLATE_SHOW_CMD="${PM_TEMPLATE_SHOW_CMD:-cat}"
+  export DOMO_HOME="${DOMO_HOME:-${HOME}/dev}"
+  export DOMO_SHOW_CMD="${DOMO_SHOW_CMD:-cat}"
 
-  env_var_names+=("PM_HOME")
-  env_var_names+=("PM_BACKEND_SHOW_CMD")
-  env_var_names+=("PM_TEMPLATE_SHOW_CMD")
+  env_var_names+=("DOMO_HOME")
+  env_var_names+=("DOMO_SHOW_CMD")
 
   missing_deps=
 
@@ -1492,71 +1473,78 @@ parse_requirements() {
   case $action in
     -*) ;;
 
-    new)
-      action="new"
+    create)
+      action="create"
       shift
-      pm_new_parse_requirements "$@"
+      domo_create_parse_requirements "$@"
       shift $#
       ;;
 
     clone)
       action="clone"
       shift
-      pm_clone_parse_requirements "$@"
+      domo_clone_parse_requirements "$@"
       shift $#
       ;;
 
     open | o)
       action="open"
       shift
-      pm_open_parse_requirements "$@"
-      shift $#
-      ;;
-
-    filter)
-      action="filter"
-      shift
-      pm_filter_parse_requirements "$@"
+      domo_open_parse_requirements "$@"
       shift $#
       ;;
 
     list | ls)
       action="list"
       shift
-      pm_list_parse_requirements "$@"
+      domo_list_parse_requirements "$@"
+      shift $#
+      ;;
+
+    _install)
+      action="_install"
+      shift
+      domo__install_parse_requirements "$@"
+      shift $#
+      ;;
+
+    _uninstall)
+      action="_uninstall"
+      shift
+      domo__uninstall_parse_requirements "$@"
       shift $#
       ;;
 
     space)
       action="space"
       shift
-      pm_space_parse_requirements "$@"
+      domo_space_parse_requirements "$@"
       shift $#
       ;;
 
     template | temp)
       action="template"
       shift
-      pm_template_parse_requirements "$@"
+      domo_template_parse_requirements "$@"
       shift $#
       ;;
 
     backend | back)
       action="backend"
       shift
-      pm_backend_parse_requirements "$@"
+      domo_backend_parse_requirements "$@"
       shift $#
       ;;
 
     "")
-      pm_usage >&2
+      domo_usage >&2
       exit 1
       ;;
 
     *)
-      if [[ -x "$(command -v "pm-$action")" ]]; then
+      if [[ -x "$(command -v "domo-$action")" ]]; then
         shift
-        exec "pm-$action" "$@"
+        exec "domo-$action" "$@"
       else
         printf "$(error)invalid command: %s\n" "$action" >&2
         exit 1
@@ -1586,14 +1574,14 @@ parse_requirements() {
 
 }
 
-pm_new_parse_requirements() {
+domo_create_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_new_usage
+        domo_create_usage
         exit
         ;;
 
@@ -1604,35 +1592,11 @@ pm_new_parse_requirements() {
     esac
   done
 
-  action="new"
+  action="create"
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-
-      --space | -s)
-
-        if [[ -n ${2+x} ]]; then
-          args['--space']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--space requires an argument: --space, -s SPACE" >&2
-          exit 1
-        fi
-        ;;
-
-      --name | -n)
-
-        if [[ -n ${2+x} ]]; then
-          args['--name']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--name requires an argument: --name, -n NAME" >&2
-          exit 1
-        fi
-        ;;
 
       --template | -t)
 
@@ -1678,23 +1642,13 @@ pm_new_parse_requirements() {
     esac
   done
 
-  if [[ -n ${args['--space']+x} ]] && [[ -z "${args[--name]:-}" ]]; then
-    printf "%s\n" "$(error)--space flag requires --name" >&2
-    exit 1
-  fi
-
-  if [[ -n ${args['--name']+x} ]] && [[ -z "${args[--space]:-}" ]]; then
-    printf "%s\n" "$(error)--name flag requires --space" >&2
+  if [[ -z ${args['--template']+x} ]]; then
+    printf "$(error)missing required flag: --template, -t TEMPLATE\n" >&2
     exit 1
   fi
 
   if [[ -v args['path'] && -n $(validate_project_is_missing "${args['path']:-}") ]]; then
     printf "$(error)validation error in %s:\n%s\n" "PATH" "$(validate_project_is_missing "${args['path']:-}")" >&2
-    exit 1
-  fi
-
-  if [[ -v args['--space'] && -n $(validate_space_exists "${args['--space']:-}") ]]; then
-    printf "$(error)validation error in %s:\n%s\n" "--space, -s SPACE" "$(validate_space_exists "${args['--space']:-}")" >&2
     exit 1
   fi
 
@@ -1710,14 +1664,14 @@ pm_new_parse_requirements() {
 
 }
 
-pm_clone_parse_requirements() {
+domo_clone_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_clone_usage
+        domo_clone_usage
         exit
         ;;
 
@@ -1734,30 +1688,6 @@ pm_clone_parse_requirements() {
     key="$1"
     case "$key" in
 
-      --space | -s)
-
-        if [[ -n ${2+x} ]]; then
-          args['--space']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--space requires an argument: --space, -s SPACE" >&2
-          exit 1
-        fi
-        ;;
-
-      --name | -n)
-
-        if [[ -n ${2+x} ]]; then
-          args['--name']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--name requires an argument: --name, -n NAME" >&2
-          exit 1
-        fi
-        ;;
-
       -?*)
         printf "$(error)invalid option: %s\n" "$key" >&2
         exit 1
@@ -1767,6 +1697,10 @@ pm_clone_parse_requirements() {
 
         if [[ -z ${args['repository']+x} ]]; then
           args['repository']=$1
+          shift
+
+        elif [[ -z ${args['path']+x} ]]; then
+          args['path']=$1
           shift
         else
           printf "$(error)invalid argument: %s\n" "$key" >&2
@@ -1784,30 +1718,22 @@ pm_clone_parse_requirements() {
     exit 1
   fi
 
-  if [[ -z ${args['--space']+x} ]]; then
-    printf "$(error)missing required flag: --space, -s SPACE\n" >&2
-    exit 1
-  fi
-  if [[ -z ${args['--name']+x} ]]; then
-    printf "$(error)missing required flag: --name, -n NAME\n" >&2
-    exit 1
-  fi
+  if [[ -z ${args['path']+x} ]]; then
+    printf "$(error)missing required argument: PATH\n" >&2
 
-  if [[ -v args['--space'] && -n $(validate_space_exists "${args['--space']:-}") ]]; then
-    printf "$(error)validation error in %s:\n%s\n" "--space, -s SPACE" "$(validate_space_exists "${args['--space']:-}")" >&2
     exit 1
   fi
 
 }
 
-pm_open_parse_requirements() {
+domo_open_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_open_usage
+        domo_open_usage
         exit
         ;;
 
@@ -1823,30 +1749,6 @@ pm_open_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-
-      --space | -s)
-
-        if [[ -n ${2+x} ]]; then
-          args['--space']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--space requires an argument: --space, -s SPACE" >&2
-          exit 1
-        fi
-        ;;
-
-      --name | -n)
-
-        if [[ -n ${2+x} ]]; then
-          args['--name']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--name requires an argument: --name, -n NAME" >&2
-          exit 1
-        fi
-        ;;
 
       --backend | -b)
 
@@ -1880,23 +1782,8 @@ pm_open_parse_requirements() {
     esac
   done
 
-  if [[ -n ${args['--space']+x} ]] && [[ -z "${args[--name]:-}" ]]; then
-    printf "%s\n" "$(error)--space flag requires --name" >&2
-    exit 1
-  fi
-
-  if [[ -n ${args['--name']+x} ]] && [[ -z "${args[--space]:-}" ]]; then
-    printf "%s\n" "$(error)--name flag requires --space" >&2
-    exit 1
-  fi
-
   if [[ -v args['path'] && -n $(validate_project_exists "${args['path']:-}") ]]; then
     printf "$(error)validation error in %s:\n%s\n" "PATH" "$(validate_project_exists "${args['path']:-}")" >&2
-    exit 1
-  fi
-
-  if [[ -v args['--space'] && -n $(validate_space_exists "${args['--space']:-}") ]]; then
-    printf "$(error)validation error in %s:\n%s\n" "--space, -s SPACE" "$(validate_space_exists "${args['--space']:-}")" >&2
     exit 1
   fi
 
@@ -1907,55 +1794,14 @@ pm_open_parse_requirements() {
 
 }
 
-pm_filter_parse_requirements() {
+domo_list_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_filter_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="filter"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      -?*)
-        printf "$(error)invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "$(error)invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-}
-
-pm_list_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        pm_list_usage
+        domo_list_usage
         exit
         ;;
 
@@ -1989,14 +1835,118 @@ pm_list_parse_requirements() {
 
 }
 
-pm_space_parse_requirements() {
+domo__install_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_space_usage
+        domo__install_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  action="_install"
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "$(error)invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+
+        if [[ -z ${args['destination']+x} ]]; then
+          args['destination']=$1
+          shift
+        else
+          printf "$(error)invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  if [[ -z ${args['destination']+x} ]]; then
+    printf "$(error)missing required argument: DESTINATION\n" >&2
+
+    exit 1
+  fi
+
+}
+
+domo__uninstall_parse_requirements() {
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        domo__uninstall_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  action="_uninstall"
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "$(error)invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+
+        if [[ -z ${args['destination']+x} ]]; then
+          args['destination']=$1
+          shift
+        else
+          printf "$(error)invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  if [[ -z ${args['destination']+x} ]]; then
+    printf "$(error)missing required argument: DESTINATION\n" >&2
+
+    exit 1
+  fi
+
+}
+
+domo_space_parse_requirements() {
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        domo_space_usage
         exit
         ;;
 
@@ -2015,26 +1965,19 @@ pm_space_parse_requirements() {
     add)
       action="add"
       shift
-      pm_space_add_parse_requirements "$@"
+      domo_space_add_parse_requirements "$@"
       shift $#
       ;;
 
     list | ls)
       action="list"
       shift
-      pm_space_list_parse_requirements "$@"
-      shift $#
-      ;;
-
-    filter)
-      action="filter"
-      shift
-      pm_space_filter_parse_requirements "$@"
+      domo_space_list_parse_requirements "$@"
       shift $#
       ;;
 
     "")
-      pm_space_usage >&2
+      domo_space_usage >&2
       exit 1
       ;;
 
@@ -2066,14 +2009,14 @@ pm_space_parse_requirements() {
 
 }
 
-pm_space_add_parse_requirements() {
+domo_space_add_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_space_add_usage
+        domo_space_add_usage
         exit
         ;;
 
@@ -2097,40 +2040,47 @@ pm_space_add_parse_requirements() {
 
       *)
 
-        if [[ -z ${args['space']+x} ]]; then
-          args['space']=$1
-          shift
+        escaped="$(printf '%q' "$1")"
+        if [[ -z ${args['spaces']+x} ]]; then
+          args['spaces']="$escaped"
         else
-          printf "$(error)invalid argument: %s\n" "$key" >&2
-          exit 1
+          args['spaces']="${args['spaces']} $escaped"
+
         fi
+        shift
 
         ;;
 
     esac
   done
 
-  if [[ -z ${args['space']+x} ]]; then
-    printf "$(error)missing required argument: SPACE\n" >&2
+  if [[ -z ${args['spaces']+x} ]]; then
+    printf "$(error)missing required argument: SPACES\n" >&2
 
     exit 1
   fi
 
-  if [[ -v args['space'] && -n $(validate_space_is_missing "${args['space']:-}") ]]; then
-    printf "$(error)validation error in %s:\n%s\n" "SPACE" "$(validate_space_is_missing "${args['space']:-}")" >&2
-    exit 1
+  if [[ -v args['spaces'] ]]; then
+    values=''
+    eval "values=(${args['spaces']})"
+    for value in "${values[@]}"; do
+      if [[ -n $(validate_space_is_missing "$value") ]]; then
+        printf "$(error)validation error in %s:\n%s\n" "SPACES" "$(validate_space_is_missing "$value")" >&2
+        exit 1
+      fi
+    done
   fi
 
 }
 
-pm_space_list_parse_requirements() {
+domo_space_list_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_space_list_usage
+        domo_space_list_usage
         exit
         ;;
 
@@ -2164,55 +2114,14 @@ pm_space_list_parse_requirements() {
 
 }
 
-pm_space_filter_parse_requirements() {
+domo_template_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_space_filter_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="space filter"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      -?*)
-        printf "$(error)invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "$(error)invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-}
-
-pm_template_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        pm_template_usage
+        domo_template_usage
         exit
         ;;
 
@@ -2228,57 +2137,43 @@ pm_template_parse_requirements() {
   case $action in
     -*) ;;
 
-    global | g)
-      action="global"
-      shift
-      pm_template_global_parse_requirements "$@"
-      shift $#
-      ;;
-
     list | ls)
       action="list"
       shift
-      pm_template_list_parse_requirements "$@"
-      shift $#
-      ;;
-
-    filter)
-      action="filter"
-      shift
-      pm_template_filter_parse_requirements "$@"
+      domo_template_list_parse_requirements "$@"
       shift $#
       ;;
 
     show)
       action="show"
       shift
-      pm_template_show_parse_requirements "$@"
+      domo_template_show_parse_requirements "$@"
       shift $#
       ;;
 
-    new)
-      action="new"
+    add)
+      action="add"
       shift
-      pm_template_new_parse_requirements "$@"
+      domo_template_add_parse_requirements "$@"
       shift $#
       ;;
 
     edit | e)
       action="edit"
       shift
-      pm_template_edit_parse_requirements "$@"
+      domo_template_edit_parse_requirements "$@"
       shift $#
       ;;
 
     which)
       action="which"
       shift
-      pm_template_which_parse_requirements "$@"
+      domo_template_which_parse_requirements "$@"
       shift $#
       ;;
 
     "")
-      pm_template_usage >&2
+      domo_template_usage >&2
       exit 1
       ;;
 
@@ -2310,65 +2205,14 @@ pm_template_parse_requirements() {
 
 }
 
-pm_template_global_parse_requirements() {
+domo_template_list_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_template_global_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="template global"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      -?*)
-        printf "$(error)invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        if [[ -z ${args['template']+x} ]]; then
-          args['template']=$1
-          shift
-        else
-          printf "$(error)invalid argument: %s\n" "$key" >&2
-          exit 1
-        fi
-
-        ;;
-
-    esac
-  done
-
-  if [[ -v args['template'] && -n $(validate_template_exists "${args['template']:-}") ]]; then
-    printf "$(error)validation error in %s:\n%s\n" "TEMPLATE" "$(validate_template_exists "${args['template']:-}")" >&2
-    exit 1
-  fi
-
-}
-
-pm_template_list_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        pm_template_list_usage
+        domo_template_list_usage
         exit
         ;;
 
@@ -2385,18 +2229,6 @@ pm_template_list_parse_requirements() {
     key="$1"
     case "$key" in
 
-      --only | -o)
-
-        if [[ -n ${2+x} ]]; then
-          args['--only']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--only requires an argument: --only, -o GROUP" >&2
-          exit 1
-        fi
-        ;;
-
       -?*)
         printf "$(error)invalid option: %s\n" "$key" >&2
         exit 1
@@ -2412,79 +2244,16 @@ pm_template_list_parse_requirements() {
     esac
   done
 
-  if [[ ${args['--only']:-} ]] && [[ ! ${args['--only']:-} =~ ^(user|default)$ ]]; then
-    printf "%s\n" "$(error)--only must be one of: user, default" >&2
-    exit 1
-  fi
-
 }
 
-pm_template_filter_parse_requirements() {
+domo_template_show_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_template_filter_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="template filter"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      --only | -o)
-
-        if [[ -n ${2+x} ]]; then
-          args['--only']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--only requires an argument: --only, -o GROUP" >&2
-          exit 1
-        fi
-        ;;
-
-      -?*)
-        printf "$(error)invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "$(error)invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-  if [[ ${args['--only']:-} ]] && [[ ! ${args['--only']:-} =~ ^(user|default)$ ]]; then
-    printf "%s\n" "$(error)--only must be one of: user, default" >&2
-    exit 1
-  fi
-
-}
-
-pm_template_show_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        pm_template_show_usage
+        domo_template_show_usage
         exit
         ;;
 
@@ -2539,7 +2308,7 @@ pm_template_show_parse_requirements() {
     exit 1
   fi
 
-  [[ -n ${args['--exec']:-} ]] || args['--exec']="${PM_TEMPLATE_SHOW_CMD}"
+  [[ -n ${args['--exec']:-} ]] || args['--exec']="${DOMO_SHOW_CMD}"
 
   if [[ -v args['template'] && -n $(validate_template_exists "${args['template']:-}") ]]; then
     printf "$(error)validation error in %s:\n%s\n" "TEMPLATE" "$(validate_template_exists "${args['template']:-}")" >&2
@@ -2548,14 +2317,14 @@ pm_template_show_parse_requirements() {
 
 }
 
-pm_template_new_parse_requirements() {
+domo_template_add_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_template_new_usage
+        domo_template_add_usage
         exit
         ;;
 
@@ -2566,7 +2335,7 @@ pm_template_new_parse_requirements() {
     esac
   done
 
-  action="template new"
+  action="template add"
 
   while [[ $# -gt 0 ]]; do
     key="$1"
@@ -2605,14 +2374,14 @@ pm_template_new_parse_requirements() {
 
 }
 
-pm_template_edit_parse_requirements() {
+domo_template_edit_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_template_edit_usage
+        domo_template_edit_usage
         exit
         ;;
 
@@ -2656,14 +2425,14 @@ pm_template_edit_parse_requirements() {
 
 }
 
-pm_template_which_parse_requirements() {
+domo_template_which_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_template_which_usage
+        domo_template_which_usage
         exit
         ;;
 
@@ -2707,14 +2476,14 @@ pm_template_which_parse_requirements() {
 
 }
 
-pm_backend_parse_requirements() {
+domo_backend_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_usage
+        domo_backend_usage
         exit
         ;;
 
@@ -2730,57 +2499,57 @@ pm_backend_parse_requirements() {
   case $action in
     -*) ;;
 
-    global | g)
-      action="global"
+    set)
+      action="set"
       shift
-      pm_backend_global_parse_requirements "$@"
+      domo_backend_set_parse_requirements "$@"
+      shift $#
+      ;;
+
+    get)
+      action="get"
+      shift
+      domo_backend_get_parse_requirements "$@"
       shift $#
       ;;
 
     list | ls)
       action="list"
       shift
-      pm_backend_list_parse_requirements "$@"
-      shift $#
-      ;;
-
-    filter)
-      action="filter"
-      shift
-      pm_backend_filter_parse_requirements "$@"
+      domo_backend_list_parse_requirements "$@"
       shift $#
       ;;
 
     show)
       action="show"
       shift
-      pm_backend_show_parse_requirements "$@"
+      domo_backend_show_parse_requirements "$@"
       shift $#
       ;;
 
-    new)
-      action="new"
+    add)
+      action="add"
       shift
-      pm_backend_new_parse_requirements "$@"
+      domo_backend_add_parse_requirements "$@"
       shift $#
       ;;
 
     edit)
       action="edit"
       shift
-      pm_backend_edit_parse_requirements "$@"
+      domo_backend_edit_parse_requirements "$@"
       shift $#
       ;;
 
     which)
       action="which"
       shift
-      pm_backend_which_parse_requirements "$@"
+      domo_backend_which_parse_requirements "$@"
       shift $#
       ;;
 
     "")
-      pm_backend_usage >&2
+      domo_backend_usage >&2
       exit 1
       ;;
 
@@ -2812,14 +2581,14 @@ pm_backend_parse_requirements() {
 
 }
 
-pm_backend_global_parse_requirements() {
+domo_backend_set_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_global_usage
+        domo_backend_set_usage
         exit
         ;;
 
@@ -2830,7 +2599,7 @@ pm_backend_global_parse_requirements() {
     esac
   done
 
-  action="backend global"
+  action="backend set"
 
   while [[ $# -gt 0 ]]; do
     key="$1"
@@ -2856,6 +2625,12 @@ pm_backend_global_parse_requirements() {
     esac
   done
 
+  if [[ -z ${args['backend']+x} ]]; then
+    printf "$(error)missing required argument: BACKEND\n" >&2
+
+    exit 1
+  fi
+
   if [[ -v args['backend'] && -n $(validate_backend_exists "${args['backend']:-}") ]]; then
     printf "$(error)validation error in %s:\n%s\n" "BACKEND" "$(validate_backend_exists "${args['backend']:-}")" >&2
     exit 1
@@ -2863,14 +2638,55 @@ pm_backend_global_parse_requirements() {
 
 }
 
-pm_backend_list_parse_requirements() {
+domo_backend_get_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_list_usage
+        domo_backend_get_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  action="backend get"
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "$(error)invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+
+        printf "$(error)invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+domo_backend_list_parse_requirements() {
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        domo_backend_list_usage
         exit
         ;;
 
@@ -2887,18 +2703,6 @@ pm_backend_list_parse_requirements() {
     key="$1"
     case "$key" in
 
-      --only | -o)
-
-        if [[ -n ${2+x} ]]; then
-          args['--only']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--only requires an argument: --only, -o GROUP" >&2
-          exit 1
-        fi
-        ;;
-
       -?*)
         printf "$(error)invalid option: %s\n" "$key" >&2
         exit 1
@@ -2914,79 +2718,16 @@ pm_backend_list_parse_requirements() {
     esac
   done
 
-  if [[ ${args['--only']:-} ]] && [[ ! ${args['--only']:-} =~ ^(user|default)$ ]]; then
-    printf "%s\n" "$(error)--only must be one of: user, default" >&2
-    exit 1
-  fi
-
 }
 
-pm_backend_filter_parse_requirements() {
+domo_backend_show_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_filter_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="backend filter"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      --only | -o)
-
-        if [[ -n ${2+x} ]]; then
-          args['--only']="$2"
-          shift
-          shift
-        else
-          printf "%s\n" "$(error)--only requires an argument: --only, -o GROUP" >&2
-          exit 1
-        fi
-        ;;
-
-      -?*)
-        printf "$(error)invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "$(error)invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-  if [[ ${args['--only']:-} ]] && [[ ! ${args['--only']:-} =~ ^(user|default)$ ]]; then
-    printf "%s\n" "$(error)--only must be one of: user, default" >&2
-    exit 1
-  fi
-
-}
-
-pm_backend_show_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        pm_backend_show_usage
+        domo_backend_show_usage
         exit
         ;;
 
@@ -3035,13 +2776,7 @@ pm_backend_show_parse_requirements() {
     esac
   done
 
-  if [[ -z ${args['backend']+x} ]]; then
-    printf "$(error)missing required argument: BACKEND\n" >&2
-
-    exit 1
-  fi
-
-  [[ -n ${args['--exec']:-} ]] || args['--exec']="${PM_BACKEND_SHOW_CMD}"
+  [[ -n ${args['--exec']:-} ]] || args['--exec']="${DOMO_SHOW_CMD}"
 
   if [[ -v args['backend'] && -n $(validate_backend_exists "${args['backend']:-}") ]]; then
     printf "$(error)validation error in %s:\n%s\n" "BACKEND" "$(validate_backend_exists "${args['backend']:-}")" >&2
@@ -3050,14 +2785,14 @@ pm_backend_show_parse_requirements() {
 
 }
 
-pm_backend_new_parse_requirements() {
+domo_backend_add_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_new_usage
+        domo_backend_add_usage
         exit
         ;;
 
@@ -3068,7 +2803,7 @@ pm_backend_new_parse_requirements() {
     esac
   done
 
-  action="backend new"
+  action="backend add"
 
   while [[ $# -gt 0 ]]; do
     key="$1"
@@ -3107,14 +2842,14 @@ pm_backend_new_parse_requirements() {
 
 }
 
-pm_backend_edit_parse_requirements() {
+domo_backend_edit_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_edit_usage
+        domo_backend_edit_usage
         exit
         ;;
 
@@ -3158,14 +2893,14 @@ pm_backend_edit_parse_requirements() {
 
 }
 
-pm_backend_which_parse_requirements() {
+domo_backend_which_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       --help | -h)
         long_usage=yes
-        pm_backend_which_usage
+        domo_backend_which_usage
         exit
         ;;
 
@@ -3220,52 +2955,17 @@ initialize() {
   long_usage=''
   set -e
 
-  export PM_HOME="${PM_HOME:-${HOME}/dev}"
-  export PM_BACKEND_SHOW_CMD="${PM_BACKEND_SHOW_CMD:-cat}"
-  export PM_TEMPLATE_SHOW_CMD="${PM_TEMPLATE_SHOW_CMD:-cat}"
+  declare -g DATA_DIR="${HOME}/.local/share/domo"
+
+  declare -g CONFIG_DIR="${HOME}/.config/domo"
+
+  export DOMO_HOME="${DOMO_HOME:-${HOME}/dev}"
+  export DOMO_SHOW_CMD="${DOMO_SHOW_CMD:-cat}"
 
   declare -g -A args=()
   declare -g -A deps=()
   declare -g -a env_var_names=()
   declare -g -a input=()
-
-  # Define data dir here rather than in bashly.yaml to prevent users from
-  # changing it.
-  export PM_DATA_DIR="${HOME}/.local/share/pm"
-
-  dirs=(
-      "${PM_HOME}"
-
-      "${PM_DATA_DIR}/templates"
-      "${PM_DATA_DIR}/backends"
-
-      "${HOME}/.config/pm/templates"
-      "${HOME}/.config/pm/backends"
-  )
-
-  #
-  # Create directories if not present
-  #
-  for destination in ${dirs[*]}; do
-      if [[ ! -d "${destination}" ]]; then
-          command mkdir -p "${destination}"
-      fi
-  done
-
-  # File used to store the name of the current template
-  export TEMPLATE_INDEX="${PM_DATA_DIR}/global-template"
-
-  # File used to store the name of the current backend
-  export BACKEND_INDEX="${PM_DATA_DIR}/global-backend"
-
-  template_name="$(cat "${TEMPLATE_INDEX}")"
-  backend_name="$(cat "${BACKEND_INDEX}")"
-
-  # Path to the current template
-  export TEMPLATE_PATH="$(find_template "${template_name}")"
-
-  # Path to the current backend
-  export BACKEND_PATH="$(find_backend "${backend_name}")"
 
 }
 
@@ -3274,31 +2974,29 @@ run() {
   parse_requirements "${input[@]}"
 
   case "$action" in
-    "new") pm_new_command ;;
-    "clone") pm_clone_command ;;
-    "open") pm_open_command ;;
-    "filter") pm_filter_command ;;
-    "list") pm_list_command ;;
-    "space") pm_space_command ;;
-    "space add") pm_space_add_command ;;
-    "space list") pm_space_list_command ;;
-    "space filter") pm_space_filter_command ;;
-    "template") pm_template_command ;;
-    "template global") pm_template_global_command ;;
-    "template list") pm_template_list_command ;;
-    "template filter") pm_template_filter_command ;;
-    "template show") pm_template_show_command ;;
-    "template new") pm_template_new_command ;;
-    "template edit") pm_template_edit_command ;;
-    "template which") pm_template_which_command ;;
-    "backend") pm_backend_command ;;
-    "backend global") pm_backend_global_command ;;
-    "backend list") pm_backend_list_command ;;
-    "backend filter") pm_backend_filter_command ;;
-    "backend show") pm_backend_show_command ;;
-    "backend new") pm_backend_new_command ;;
-    "backend edit") pm_backend_edit_command ;;
-    "backend which") pm_backend_which_command ;;
+    "create") domo_create_command ;;
+    "clone") domo_clone_command ;;
+    "open") domo_open_command ;;
+    "list") domo_list_command ;;
+    "_install") domo__install_command ;;
+    "_uninstall") domo__uninstall_command ;;
+    "space") domo_space_command ;;
+    "space add") domo_space_add_command ;;
+    "space list") domo_space_list_command ;;
+    "template") domo_template_command ;;
+    "template list") domo_template_list_command ;;
+    "template show") domo_template_show_command ;;
+    "template add") domo_template_add_command ;;
+    "template edit") domo_template_edit_command ;;
+    "template which") domo_template_which_command ;;
+    "backend") domo_backend_command ;;
+    "backend set") domo_backend_set_command ;;
+    "backend get") domo_backend_get_command ;;
+    "backend list") domo_backend_list_command ;;
+    "backend show") domo_backend_show_command ;;
+    "backend add") domo_backend_add_command ;;
+    "backend edit") domo_backend_edit_command ;;
+    "backend which") domo_backend_which_command ;;
   esac
 }
 

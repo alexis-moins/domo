@@ -1,3 +1,3 @@
-local backend_name="${args[backend]}"
+local env_name="${args[backend]}"
 
-echo "$(find_backend "${backend_name}")"
+echo "$(find_backend "${env_name}")"

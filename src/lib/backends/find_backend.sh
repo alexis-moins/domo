@@ -1,10 +1,10 @@
 find_backend() {
-    # Search for user backend first
-    local backend="${HOME}/.config/pm/backends/${1}.sh"
+    # Find a backend by its name.
+    local backend="${CONFIG_DIR}/backends/${1}"
 
     if [[ ! -f "${backend}" ]]; then
-        # Then search for pm backends
-        backend="${PM_DATA_DIR}/backends/${1}.sh"
+        # If not found, search in default backends
+        backend="${DATA_DIR}/backends/${1}"
 
         if [[ ! -f "${backend}" ]]; then
             error "backend '${1}' not found"

@@ -1,6 +1,6 @@
-local backend_name="${args[backend]}"
+local backend_name="${args[backend]:-"$(filter_backends)"}"
 local command="${args[--exec]}"
 
-local backend="$(find_backend "${backend_name}")"
+local backend_path="$(find_backend "${backend_name}")"
 
-command ${command} "${backend}"
+command ${command} "${backend_path}"

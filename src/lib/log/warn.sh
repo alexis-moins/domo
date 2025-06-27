@@ -1,4 +1,4 @@
 warn() {
-    echo "$(yellow "pm:") ${1}"
+    echo "$(yellow "domo:") ${1}"
 }
 

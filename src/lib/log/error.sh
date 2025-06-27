@@ -1,4 +1,4 @@
 error() {
-    echo "$(red "pm:") ${1}"
+    echo "$(red "domo:") ${1}"
 }
 

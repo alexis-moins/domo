@@ -1,4 +1,4 @@
 info() {
-    echo "$(blue "pm:") ${1}"
+    echo "$(blue "domo:") ${1}"
 }
 

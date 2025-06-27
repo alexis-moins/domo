@@ -4,7 +4,7 @@
 
 </div>
 
-`pm` is a bash script allowing users to rapidly list, create and navigate between your projects. It integrate with different backends (tmux, vscode) for convenience.
+`domo` is a bash script allowing users to rapidly list, create and navigate between your projects. It integrate with different backends (tmux, vscode) for convenience.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@
 
 Clone the repository
 ```bash
-git clone git@github.com:alexis-moins/pm.git ~/.pm
+git clone git@github.com:alexis-moins/domo.git ~/.domo
 ```
 
 Go into the install directory and execute the [install](install.sh) script:
@@ -26,7 +26,7 @@ Go into the install directory and execute the [install](install.sh) script:
 ./install.sh
 ```
 
-The install script copies the `pm` script in the `~/.local/bin` directory (you can also change the destination by passing it as an argument to the install script).
+The install script copies the `domo` script in the `~/.local/bin` directory (you can also change the destination by passing it as an argument to the install script).
 
 ## 🌱 Quick Start
 
@@ -34,50 +34,49 @@ After installing, you can follow these steps to quickly see how it works:
 
 ```bash
 # Add a new space
-pm space add personal
+domo space add personal
 
 # You can then create new projects in this space
-pm new personal/react-app
+domo create work/react-app
 
-# pm supports project creation using templates
-pm new personal/react-app --template=vite
+# domo supports project creation using templates
+domo create work/react-app --template=vite
 
 # But also creating your own one
-pm template new python-poetry
+domo template add python-poetry
 
 # Opening a project is simple
-pm open personal/react-app
+domo open work/react-app
 
 # But using a different backend is also possible
-pm open personal/react-app --backend=vscode
+domo open work/react-app --backend=vscode
 
 # You can even clone github repositories directly
-pm clone git@github.com:alexis-moins/dot.git --space=work --name=dot
+domo clone git@github.com:alexis-moins/dotfiles.git work/dotfiles
 ```
 
 ## 🚦 Usage
 
 ```
-$ pm
+$ domo
 
-pm - manage your projects the easy way
+domo - manage your projects the easy way
 
 Usage:
-  pm COMMAND
-  pm [COMMAND] --help | -h
-  pm --version | -v
+  domo COMMAND
+  domo [COMMAND] --help | -h
+  domo --version | -v
 
 Project Commands:
-  new        Create a new empty project
-  clone      Clone a remote git repository
-  open       Open a project
-  filter     Filter projects
-  list       List projects
+  create       Create a new project
+  clone        Clone a remote git repository
+  open         Open a project
+  list         List projects
 
 Commands:
-  space      Add, list and filter spaces
-  template   Template related commands
-  backend    Backend related commands
+  space        Space related commands
+  template     Template related commands
+  backend      Backend related commands
 
 Options:
   --help, -h
@@ -87,15 +86,11 @@ Options:
     Show version number
 
 Environment Variables:
-  PM_HOME
+  DOMO_HOME
     Directory where the projects will be managed
     Default: ~/dev
 
-  PM_BACKEND_SHOW_CMD
-    Command used to show backends
-    Default: cat
-
-  PM_TEMPLATE_SHOW_CMD
-    Command used to show templates
+  DOMO_SHOW_CMD
+    Command used to show backends & templates
     Default: cat
 ```

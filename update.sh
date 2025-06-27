@@ -9,8 +9,8 @@ GREEN="\e[32;1m"
 
 destination="${1:-"${HOME}/.local/bin"}"
 
-./uninstall.sh "${destination}" &> /dev/null
+./uninstall.sh "${destination}"
 
 command git pull
 
-./install.sh "${destination}" &> /dev/null
+./install.sh "${destination}"
