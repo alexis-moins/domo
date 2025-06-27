@@ -327,11 +327,12 @@ domo_template_usage() {
   echo
 
   printf "%s\n" "Commands:"
-  printf "  %s   List templates\n" "list "
-  printf "  %s   Show a template\n" "show "
-  printf "  %s   Add a new template\n" "add  "
-  printf "  %s   Edit a template\n" "edit "
-  printf "  %s   Locates a template\n" "which"
+  printf "  %s   Set a template as global\n" "global"
+  printf "  %s   List templates\n" "list  "
+  printf "  %s   Show a template\n" "show  "
+  printf "  %s   Add a new template\n" "add   "
+  printf "  %s   Edit a template\n" "edit  "
+  printf "  %s   Locates a template\n" "which "
   echo
 
   if [[ -n "$long_usage" ]]; then
@@ -339,6 +340,37 @@ domo_template_usage() {
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+domo_template_global_usage() {
+  printf "domo template global - Set a template as global\n\n"
+  printf "Alias: g\n"
+  echo
+
+  printf "%s\n" "Usage:"
+  printf "  domo template global [TEMPLATE]\n"
+  printf "  domo template global --help | -h\n"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    printf "%s\n" "Arguments:"
+
+    printf "  %s\n" "TEMPLATE"
+    printf "    Name of the template\n"
+    echo
+
+    printf "%s\n" "Examples:"
+    printf "  pm template global\n"
+    printf "  pm template global react\n"
     echo
 
   fi
@@ -1274,6 +1306,22 @@ domo_space_list_command() {
 
 }
 
+domo_template_global_command() {
+
+  local template="${args[template]}"
+
+  if [[ -z "${template}" ]]; then
+      # interactively select a template if none is provided
+      template="$(filter_templates)"
+
+      [[ -z "${template}" ]] && exit 0
+  fi
+
+  echo "${template}" > "${TEMPLATE_INDEX}"
+  success "using '${template}' as global template"
+
+}
+
 domo_template_list_command() {
 
   list_templates
@@ -2137,6 +2185,13 @@ domo_template_parse_requirements() {
   case $action in
     -*) ;;
 
+    global | g)
+      action="global"
+      shift
+      domo_template_global_parse_requirements "$@"
+      shift $#
+      ;;
+
     list | ls)
       action="list"
       shift
@@ -2202,6 +2257,57 @@ domo_template_parse_requirements() {
 
     esac
   done
+
+}
+
+domo_template_global_parse_requirements() {
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        domo_template_global_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  action="template global"
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "$(error)invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+
+        if [[ -z ${args['template']+x} ]]; then
+          args['template']=$1
+          shift
+        else
+          printf "$(error)invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  if [[ -v args['template'] && -n $(validate_template_exists "${args['template']:-}") ]]; then
+    printf "$(error)validation error in %s:\n%s\n" "TEMPLATE" "$(validate_template_exists "${args['template']:-}")" >&2
+    exit 1
+  fi
 
 }
 
@@ -2951,7 +3057,7 @@ domo_backend_which_parse_requirements() {
 }
 
 initialize() {
-  version="1.8.4"
+  version="2.0.0"
   long_usage=''
   set -e
 
@@ -2984,6 +3090,7 @@ run() {
     "space add") domo_space_add_command ;;
     "space list") domo_space_list_command ;;
     "template") domo_template_command ;;
+    "template global") domo_template_global_command ;;
     "template list") domo_template_list_command ;;
     "template show") domo_template_show_command ;;
     "template add") domo_template_add_command ;;
