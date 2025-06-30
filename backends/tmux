@@ -6,19 +6,15 @@
 #
 # SPACE        - name of the space the project must be created in.
 #
-# SPACE_PATH   - absolute path to the space directory. It corresponds to the
-#                following pattern evaluated: ${HOME}/${DOMO_HOME}/${SPACE}.
+# SPACE_PATH   - absolute path to the space directory.
 #
 # PROJECT      - name of the project that must be created.
 #
-# PROJECT_PATH - absolute path to the project directory. It corresponds to the
-#                following pattern evaluated: ${SPACE_PATH}/${PROJECT}.
+# PROJECT_PATH - absolute path to the project directory.
 #
 name="${SPACE}|${PROJECT/\./dot-}"
 
-local session="$(tmux list-windows -aF '#S: #{pane_current_path}' \
-    | uniq \
-    | command grep "${name}: ${PROJECT_PATH::-1}")"
+local session="$(tmux list-windows -aF '#S' | uniq | grep "${name}")"
 
 if [[ -z "${TMUX}" ]]; then
     # Outside tmux session
