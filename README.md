@@ -72,6 +72,7 @@ Project Commands:
   clone        Clone a remote git repository
   open         Open a project
   list         List projects
+  exec         Execute a command in a project
 
 Commands:
   space        Space related commands

@@ -3,8 +3,6 @@
 #
 local destination="${args[destination]}"
 
-inspect_args
-
 #
 # Flags
 #

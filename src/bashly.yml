@@ -98,6 +98,24 @@ commands:
       - domo ls
       - domo list
 
+  - name: exec
+    help: Execute a command in a project
+    group: Project
+    alias: x
+
+    args:
+      - name: command
+        help: Command to execute in the project
+        required: true
+        repeatable: true
+
+    flags:
+      - short: -p
+        long: --path
+        help: Path to the project
+        arg: path
+        validate: project_exists
+
   - name: _install
     help: Installation helper command
     private: true

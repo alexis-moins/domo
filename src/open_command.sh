@@ -2,7 +2,8 @@
 # Arguments
 #
 
-local path="${args[path]}"
+local path="${args[path]:-$(filter_projects)}"
+[[ -z "${path}" ]] && exit 1
 
 #
 # Flags
@@ -27,16 +28,6 @@ fi
 #
 # PATH
 #
-
-# If the path is not specified, use the filtered projects
-if [[ -z "${path}" ]]; then
-    local path="${args[path]:-"$(filter_projects)"}"
-
-    if [[ -z "${path}" ]]; then
-        exit 1
-    fi
-fi
-
 space="$(dirname "${path}")"
 name="$(basename "${path}")"
 
