@@ -25,6 +25,7 @@ domo_usage() {
   printf "  %s   Clone a remote git repository\n" "clone     "
   printf "  %s   Open a project\n" "open      "
   printf "  %s   List projects\n" "list      "
+  printf "  %s   Execute a command in a project\n" "exec      "
   echo
   printf "%s\n" "Commands:"
   printf "  %s   Space related commands\n" "space     "
@@ -61,7 +62,7 @@ domo_create_usage() {
   printf "domo create - Create a new project\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  domo create [PATH] [OPTIONS]\n"
+  printf "  domo create PATH [OPTIONS]\n"
   printf "  domo create --help | -h\n"
   echo
 
@@ -186,6 +187,36 @@ domo_list_usage() {
   fi
 }
 
+domo_exec_usage() {
+  printf "domo exec - Execute a command in a project\n\n"
+  printf "Alias: x\n"
+  echo
+
+  printf "%s\n" "Usage:"
+  printf "  domo exec COMMAND... [OPTIONS]\n"
+  printf "  domo exec --help | -h\n"
+  echo
+
+  if [[ -n "$long_usage" ]]; then
+    printf "%s\n" "Options:"
+
+    printf "  %s\n" "--path, -p PATH"
+    printf "    Path to the project\n"
+    echo
+
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    printf "%s\n" "Arguments:"
+
+    printf "  %s\n" "COMMAND..."
+    printf "    Command to execute in the project\n"
+    echo
+
+  fi
+}
+
 domo__install_usage() {
   printf "domo _install - Installation helper command\n\n"
 
@@ -217,12 +248,16 @@ domo__uninstall_usage() {
   printf "domo _uninstall - Uninstallation helper command\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  domo _uninstall DESTINATION\n"
+  printf "  domo _uninstall DESTINATION [OPTIONS]\n"
   printf "  domo _uninstall --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
+
+    printf "  %s\n" "--soft, -s"
+    printf "    Soft uninstall, keeps global backend config\n"
+    echo
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
@@ -1168,7 +1203,8 @@ domo_open_command() {
   # Arguments
   #
 
-  local path="${args[path]}"
+  local path="${args[path]:-$(filter_projects)}"
+  [[ -z "${path}" ]] && exit 1
 
   #
   # Flags
@@ -1193,16 +1229,6 @@ domo_open_command() {
   #
   # PATH
   #
-
-  # If the path is not specified, use the filtered projects
-  if [[ -z "${path}" ]]; then
-      local path="${args[path]:-"$(filter_projects)"}"
-
-      if [[ -z "${path}" ]]; then
-          exit 1
-      fi
-  fi
-
   space="$(dirname "${path}")"
   name="$(basename "${path}")"
 
@@ -1229,6 +1255,33 @@ domo_open_command() {
 domo_list_command() {
 
   list_projects
+
+}
+
+domo_exec_command() {
+
+  #
+  # Arguments
+  #
+  local command="${args[command]}"
+
+  #
+  # Flags
+  #
+  local path="${args[--path]:-$(filter_projects)}"
+  [[ -z "${path}" ]] && exit 1
+
+  space="$(dirname "${path}")"
+  name="$(basename "${path}")"
+
+  if ! project_exists "${space}" "${name}"; then
+      error "no project '${name}' in space '${space}'"
+      exit 1
+  fi
+
+  cd "${DOMO_HOME}/${path}"
+
+  command ${command[@]}
 
 }
 
@@ -1263,8 +1316,10 @@ domo__install_command() {
   command cp -R ./backends "${DATA_DIR}/"
   command cp -R ./templates "${DATA_DIR}/"
 
-  # Sets the default global backend to 'shell'
-  echo "shell" > "${DATA_DIR}/global-backend"
+  if [[ ! -s "${DATA_DIR}/global-backend" ]]; then
+      # Sets the default global backend to 'shell'
+      echo "shell" > "${DATA_DIR}/global-backend"
+  fi
 
   command cp domo "${destination}/domo"
   success "ready to use"
@@ -1278,7 +1333,17 @@ domo__uninstall_command() {
   #
   local destination="${args[destination]}"
 
-  command rm -rf "${DATA_DIR}"
+  #
+  # Flags
+  #
+  local soft="${args[--soft]}"
+
+  if [[ -n "${soft}" ]]; then
+      # Don't remove the global backend file
+      command rm -rf "${DATA_DIR}/backends" "${DATA_DIR}/templates"
+  else
+      command rm -rf "${DATA_DIR}"
+  fi
 
   if [[ -f "${destination}/domo" ]]; then
       command rm "${destination}/domo"
@@ -1549,6 +1614,13 @@ parse_requirements() {
       shift $#
       ;;
 
+    exec | x)
+      action="exec"
+      shift
+      domo_exec_parse_requirements "$@"
+      shift $#
+      ;;
+
     _install)
       action="_install"
       shift
@@ -1689,6 +1761,12 @@ domo_create_parse_requirements() {
 
     esac
   done
+
+  if [[ -z ${args['path']+x} ]]; then
+    printf "$(error)missing required argument: PATH\n" >&2
+
+    exit 1
+  fi
 
   if [[ -z ${args['--template']+x} ]]; then
     printf "$(error)missing required flag: --template, -t TEMPLATE\n" >&2
@@ -1883,6 +1961,76 @@ domo_list_parse_requirements() {
 
 }
 
+domo_exec_parse_requirements() {
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      --help | -h)
+        long_usage=yes
+        domo_exec_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  action="exec"
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      --path | -p)
+
+        if [[ -n ${2+x} ]]; then
+          args['--path']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "$(error)--path requires an argument: --path, -p PATH" >&2
+          exit 1
+        fi
+        ;;
+
+      -?*)
+        printf "$(error)invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+
+        escaped="$(printf '%q' "$1")"
+        if [[ -z ${args['command']+x} ]]; then
+          args['command']="$escaped"
+        else
+          args['command']="${args['command']} $escaped"
+
+        fi
+        shift
+
+        ;;
+
+    esac
+  done
+
+  if [[ -z ${args['command']+x} ]]; then
+    printf "$(error)missing required argument: COMMAND\n" >&2
+
+    exit 1
+  fi
+
+  if [[ -v args['--path'] && -n $(validate_project_exists "${args['--path']:-}") ]]; then
+    printf "$(error)validation error in %s:\n%s\n" "--path, -p PATH" "$(validate_project_exists "${args['--path']:-}")" >&2
+    exit 1
+  fi
+
+}
+
 domo__install_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
@@ -1958,6 +2106,12 @@ domo__uninstall_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+
+      --soft | -s)
+
+        args['--soft']=1
+        shift
+        ;;
 
       -?*)
         printf "$(error)invalid option: %s\n" "$key" >&2
@@ -3057,7 +3211,7 @@ domo_backend_which_parse_requirements() {
 }
 
 initialize() {
-  version="2.0.0"
+  version="2.1.0"
   long_usage=''
   set -e
 
@@ -3084,6 +3238,7 @@ run() {
     "clone") domo_clone_command ;;
     "open") domo_open_command ;;
     "list") domo_list_command ;;
+    "exec") domo_exec_command ;;
     "_install") domo__install_command ;;
     "_uninstall") domo__uninstall_command ;;
     "space") domo_space_command ;;

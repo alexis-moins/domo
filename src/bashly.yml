@@ -1,7 +1,7 @@
 name: domo
 help: manage your projects the easy way
 extensible: true
-version: 2.0.0
+version: 2.1.0
 
 environment_variables:
   - name: DOMO_HOME
@@ -32,6 +32,7 @@ commands:
       - name: path
         help: Path to the project
         validate: project_is_missing
+        required: true
 
     flags:
       - short: -t
@@ -76,7 +77,6 @@ commands:
       - name: path
         help: Path to the project
         validate: project_exists
-        required: false
 
     flags:
       - short: -b
@@ -97,6 +97,24 @@ commands:
     examples:
       - domo ls
       - domo list
+
+  - name: exec
+    help: Execute a command in a project
+    group: Project
+    alias: x
+
+    args:
+      - name: command
+        help: Command to execute in the project
+        required: true
+        repeatable: true
+
+    flags:
+      - short: -p
+        long: --path
+        help: Path to the project
+        arg: path
+        validate: project_exists
 
   - name: _install
     help: Installation helper command
@@ -125,6 +143,11 @@ commands:
       - name: destination
         help: Path to install the script
         required: true
+
+    flags:
+      - short: -s
+        long: --soft
+        help: Soft uninstall, keeps global backend config
 
   - name: space
     help: Space related commands
