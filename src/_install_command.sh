@@ -27,8 +27,10 @@ done
 command cp -R ./backends "${DATA_DIR}/"
 command cp -R ./templates "${DATA_DIR}/"
 
-# Sets the default global backend to 'shell'
-echo "shell" > "${DATA_DIR}/global-backend"
+if [[ ! -s "${DATA_DIR}/global-backend" ]]; then
+    # Sets the default global backend to 'shell'
+    echo "shell" > "${DATA_DIR}/global-backend"
+fi
 
 command cp domo "${destination}/domo"
 success "ready to use"

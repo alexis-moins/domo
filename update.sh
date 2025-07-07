@@ -6,8 +6,9 @@ set -e
 
 destination="${1:-"${HOME}/.local/bin"}"
 
-./uninstall.sh "${destination}"
+# Soft uninstall the current version (does not remove global backend info)
+./domo _uninstall "${destination}" --soft
 
 command git pull
 
-./install.sh "${destination}"
+./domo _install "${destination}"

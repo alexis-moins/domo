@@ -61,7 +61,7 @@ domo_create_usage() {
   printf "domo create - Create a new project\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  domo create [PATH] [OPTIONS]\n"
+  printf "  domo create PATH [OPTIONS]\n"
   printf "  domo create --help | -h\n"
   echo
 
@@ -217,12 +217,16 @@ domo__uninstall_usage() {
   printf "domo _uninstall - Uninstallation helper command\n\n"
 
   printf "%s\n" "Usage:"
-  printf "  domo _uninstall DESTINATION\n"
+  printf "  domo _uninstall DESTINATION [OPTIONS]\n"
   printf "  domo _uninstall --help | -h\n"
   echo
 
   if [[ -n "$long_usage" ]]; then
     printf "%s\n" "Options:"
+
+    printf "  %s\n" "--soft, -s"
+    printf "    Soft uninstall, keeps global backend config\n"
+    echo
 
     printf "  %s\n" "--help, -h"
     printf "    Show this help\n"
@@ -1263,8 +1267,10 @@ domo__install_command() {
   command cp -R ./backends "${DATA_DIR}/"
   command cp -R ./templates "${DATA_DIR}/"
 
-  # Sets the default global backend to 'shell'
-  echo "shell" > "${DATA_DIR}/global-backend"
+  if [[ ! -s "${DATA_DIR}/global-backend" ]]; then
+      # Sets the default global backend to 'shell'
+      echo "shell" > "${DATA_DIR}/global-backend"
+  fi
 
   command cp domo "${destination}/domo"
   success "ready to use"
@@ -1278,7 +1284,19 @@ domo__uninstall_command() {
   #
   local destination="${args[destination]}"
 
-  command rm -rf "${DATA_DIR}"
+  inspect_args
+
+  #
+  # Flags
+  #
+  local soft="${args[--soft]}"
+
+  if [[ -n "${soft}" ]]; then
+      # Don't remove the global backend file
+      command rm -rf "${DATA_DIR}/backends" "${DATA_DIR}/templates"
+  else
+      command rm -rf "${DATA_DIR}"
+  fi
 
   if [[ -f "${destination}/domo" ]]; then
       command rm "${destination}/domo"
@@ -1690,6 +1708,12 @@ domo_create_parse_requirements() {
     esac
   done
 
+  if [[ -z ${args['path']+x} ]]; then
+    printf "$(error)missing required argument: PATH\n" >&2
+
+    exit 1
+  fi
+
   if [[ -z ${args['--template']+x} ]]; then
     printf "$(error)missing required flag: --template, -t TEMPLATE\n" >&2
     exit 1
@@ -1958,6 +1982,12 @@ domo__uninstall_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+
+      --soft | -s)
+
+        args['--soft']=1
+        shift
+        ;;
 
       -?*)
         printf "$(error)invalid option: %s\n" "$key" >&2
@@ -3057,7 +3087,7 @@ domo_backend_which_parse_requirements() {
 }
 
 initialize() {
-  version="2.0.0"
+  version="2.1.0"
   long_usage=''
   set -e
 
